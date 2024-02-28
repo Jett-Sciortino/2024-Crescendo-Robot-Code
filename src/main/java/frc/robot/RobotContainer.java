@@ -19,22 +19,20 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final XboxController driver = new XboxController(0);
-    private final XboxController operator = new XboxController(1);
+    private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
     /* Drive Controls */
-    private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
-
+    
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+    /*private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton launchNote = new JoystickButton(driver, XboxController.Button.kA.value);
-    private final JoystickButton intake = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton launchNote = new JoystickButton(operator, XboxController.Button.kA.value);
+    private final JoystickButton intake = new JoystickButton(operator, XboxController.Button.kRightBumper.value);*/
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
     private final CANLauncher m_launcher = new CANLauncher();
+    private final Climber climber = new Climber();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -44,7 +42,7 @@ public class RobotContainer {
                 () -> -driver.getLeftY(), 
                 () -> -driver.getLeftX(), 
                 () -> -driver.getRightX(), 
-                () -> robotCentric.getAsBoolean()
+                () -> driver.leftBumper().getAsBoolean()
             )
         );
 
@@ -60,14 +58,17 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        driver.y().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         
-        intake.whileTrue(m_launcher.getIntakeCommand());
+        driver.rightBumper().whileTrue(m_launcher.getIntakeCommand());
         
-        launchNote.whileTrue(new PrepareLaunch(m_launcher)
+        operator.a().whileTrue(new PrepareLaunch(m_launcher)
                 .withTimeout(Constants.CANLauncher.kLauncherDelay)
                 .andThen(new LaunchNote(m_launcher))
                 .handleInterrupt(() -> m_launcher.stop()));
+
+        operator.leftBumper().whileTrue(new RetractClimber(climber));
+        operator.leftTrigger().whileTrue(new ExtendClimber(climber));
     }
 
     /**

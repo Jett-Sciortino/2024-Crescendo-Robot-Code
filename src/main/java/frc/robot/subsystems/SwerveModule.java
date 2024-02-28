@@ -6,7 +6,6 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicStatus1;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -162,11 +161,4 @@ public class SwerveModule {
     );
   }
 
-  /*public PeriodicStatus1 getDriveMotor() {
-    return new PeriodicStatus1();
-  }
-
-  public PeriodicStatus1 getAngleMotor() {
-    return angleMotor.new PeriodicStatus1();
-  }*/
 }

@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.CANLauncher.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,11 +15,18 @@ public class CANLauncher extends SubsystemBase {
   
     /** Creates a new Launcher. */
     public CANLauncher() {
-      m_launchWheel = new CANSparkMax(kLauncherID, MotorType.kBrushed);
-      m_feedWheel = new CANSparkMax(kFeederID, MotorType.kBrushed);
+      m_launchWheel = new CANSparkMax(kLauncherID, MotorType.kBrushless);
+      m_feedWheel = new CANSparkMax(kFeederID, MotorType.kBrushless);
   
       m_launchWheel.setSmartCurrentLimit(kLauncherCurrentLimit);
       m_feedWheel.setSmartCurrentLimit(kFeedCurrentLimit);
+      
+    }
+
+    @Override
+    public void periodic() {
+      SmartDashboard.putNumber("Launch Current ", m_launchWheel.getOutputCurrent());
+      SmartDashboard.putNumber("Feed Current ", m_feedWheel.getOutputCurrent());
     }
   
     /**
@@ -58,4 +67,6 @@ public class CANLauncher extends SubsystemBase {
       m_launchWheel.set(0);
       m_feedWheel.set(0);
     }
+
+
   }
